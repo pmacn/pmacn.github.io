@@ -1,0 +1,12 @@
+a,a:link{cursor:pointer}
+html,body{min-height:100%}
+body{padding-top:60px}
+h1{padding:.2em;border-bottom:dashed 1px #333}
+h2{border-top:dashed 1px #333;padding-top:.5em}
+table th,tfoot th,tbody th{border-top:1px solid #ddd}
+#content{font-family:"Lato",sans-serif}
+#wrap{min-height:100%;height:auto;margin:0 auto -60px;padding:0 0 60px}
+#sitefooter{padding:1em 4em}
+#post{max-width:100%;}
+#post img{height:auto;max-width:100%}
+.profile-icon{width:56px;height:56px;margin:.2em}

@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Hardest way to set a PATH | Peter MacNaughton</title><meta name="description" content="Peter MacNaughton's personal website"><meta name="keywords" content="peter, macnaughton, tech, programmming, .net"><meta name="author" content="Peter MacNaughton"><meta name="generator" content="DocPad v6.54.6" /><meta name="viewport" content="width=device-width"><link rel="shortcut icon" href="images/icons/favicon.ico"><link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/icons/apple-touch-icon-144-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/icons/apple-touch-icon-114-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/icons/apple-touch-icon-72-precomposed.png"><link rel="apple-touch-icon-precomposed" href="images/icons/apple-touch-icon-57-precomposed.png"><!--[if lt IE 9]><script async src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]--><link  rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" /><link  rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" /><link  rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" /><link  rel="stylesheet" href="/styles/twitter-bootstrap.css" /><link  rel="stylesheet" href="/styles/codehighlight.css" /><link  rel="stylesheet" href="/styles/style.css" /></head><body><div class="navbar navbar-default navbar-fixed-top"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">MacNaughton</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav"><li typeof="sioc:Page" about="/pages/about"><a href="/pages/about" property="dc:title">About</a></li></ul></div></div><div id="wrap"><section id="content" class="content col-xs-12 col-md-9"><article id="post" class="col-xs-12 post col-lg-8 pull-right"><h1>Hardest way to set a PATH</h1><div class="post-content"><p>In a <a href="/posts/setting-up-multiple-rubies-on-windows/">previous post</a> I hacked together a cumbersome Powershell statement when I tried to set a path from the shell in a way that anyone could use. And it also had to be persistent.</p>
+<p>Using <code>$env:Path</code> only sets the path for that session so it wasn&#39;t an option since it would leave people hanging when they restarted the shell.<!-- read more --></p>
+<p>It kinda stumped me for a while because I found it disturbingly ugly but didn&#39;t want to go off on a tangent to set up a function. So here is that tangent!</p>
+<p>Open up powershell and set your execution policy unless you&#39;ve already done so.</p>
+<pre class="highlighted"><code class="no-highlight">PS C:\&gt; Set-ExecutionPolicy Unrestricted -Scope CurrentUser</code></pre>
+<p>then enter</p>
+<pre class="highlighted"><code class="no-highlight">PS C:&gt; $profile</code></pre>
+<p>This will give you the path to your startup script, the file will not exist unless you&#39;ve set it up before. This script runs every time you open a PowerShell.</p>
+<p>Go create that file and open it in your prefered text editor. Then paste the following two functions into it.</p>
+<pre class="highlighted"><code class="php"><span class="function"><span class="keyword">function</span> <span class="title">Add</span>-<span class="title">Path</span> {</span> 
+  param ( 
+    [Parameter(Mandatory=<span class="variable">$true</span>, ValueFromPipeline=<span class="variable">$true</span>)]
+    <span class="variable">$Path</span> 
+  )
+
+  <span class="keyword">if</span> (-not (Test-Path -LiteralPath <span class="variable">$Path</span> -IsValid)) {
+    Write-Output <span class="string">"'$Path' is not a valid path."</span>
+    <span class="keyword">return</span> 
+  }
+
+  <span class="variable">$EnvironmentScope</span> = <span class="string">"User"</span>
+  <span class="variable">$PATHVariable</span> = [environment]::GetEnvironmentVariable(<span class="string">"PATH"</span>, <span class="variable">$EnvironmentScope</span>)
+  <span class="variable">$ExistingPaths</span> = <span class="variable">$PATHVariable</span>.Replace(<span class="string">";;"</span>, <span class="string">";"</span>).Split(<span class="string">";"</span>)
+  <span class="keyword">if</span> (<span class="variable">$ExistingPaths</span>.Contains(<span class="variable">$Path</span>)) {
+    Write-Output <span class="string">"'$Path' is already in your environment PATH."</span> 
+  } <span class="keyword">else</span> {
+    <span class="variable">$UpdatedPATHVariable</span> = [system.String]::Join(<span class="string">";"</span>, <span class="variable">$ExistingPaths</span> + <span class="variable">$Path</span>).Replace(<span class="string">";;"</span>, <span class="string">";"</span>) 
+    [environment]::SetEnvironmentVariable(<span class="string">"PATH"</span>, <span class="variable">$UpdatedPATHVariable</span>, <span class="variable">$EnvironmentScope</span>) 
+  }
+}</code></pre>
+<pre class="highlighted"><code class="php"><span class="function"><span class="keyword">function</span> <span class="title">Remove</span>-<span class="title">Path</span> {</span>
+  param ( 
+    [Parameter(Mandatory=<span class="variable">$True</span>, ValueFromPipeline=<span class="variable">$True</span>)]
+    <span class="variable">$Path</span>
+  )
+
+  <span class="variable">$EnvironmentScope</span> = <span class="string">"User"</span>
+  <span class="variable">$RemainingPaths</span> = <span class="keyword">New</span>-Object System.Collections.Generic.<span class="keyword">List</span>[String]
+  <span class="keyword">foreach</span> (<span class="variable">$existingPath</span> in [environment]::GetEnvironmentVariable(<span class="string">"PATH"</span>, <span class="variable">$EnvironmentScope</span>).Replace(<span class="string">";;"</span>, <span class="string">";"</span>).Split(<span class="string">";"</span>)) {
+    <span class="keyword">if</span> (-not <span class="variable">$existingPath</span>.Equals(<span class="variable">$Path</span>)) {
+      <span class="variable">$RemainingPaths</span>.Add(<span class="variable">$existingPath</span>)
+    }
+  }
+
+  [environment]::SetEnvironmentVariable(<span class="string">"PATH"</span>, [system.String]::Join(<span class="string">";"</span>, <span class="variable">$RemainingPaths</span>), <span class="variable">$EnvironmentScope</span>)
+}</code></pre>
+<p>Now adding and removing a path to your PATH variable is as easy as</p>
+<pre class="highlighted"><code class="no-highlight">PS C:&gt; Remove-Path C:\MyOldPath
+PS C:&gt; Add-Path C:\MyNewPath</code></pre>
+</div></article><aside class="col-xs-12 col-lg-4 pull-right"></aside><section class="col-xs-12 col-lg-8 pull-right"><h1>Comments</h1><div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_shortname = 'macnaughton';
+var disqus_identifier = 'http://peter.macnaughton.info/posts/hardest-way-to-set-a-path';
+var disqus_url = 'http://peter.macnaughton.info/posts/hardest-way-to-set-a-path';
+var disqus_title = 'Hardest way to set a PATH';
+var disqus_script = 'embed.js';
+
+(function () {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());</script></section></section><section id="asides" class="container col-xs-12 col-md-3"><aside><h1>Also available on</h1><a href="http://stackoverflow.com/users/1418063/pmacnaughton" target="_blank"><img src="/images/stackoverflow.svg" alt="StackOverflow" title="StackOverflow" class="profile-icon img-thumbnail"/></a><a href="http://careers.stackoverflow.com/pmacnaughton" target="_blank"><img src="/images/careers.svg" alt="StackOverflow Careers" title="StackOverflow Careers" class="profile-icon img-thumbnail"/></a><a href="http://github.com/pmacn" target="_blank"><img src="/images/github.svg" alt="GitHub" title="GitHub" class="profile-icon img-thumbnail"/></a><a href="http://www.linkedin.com/in/pmacnaughton" target="_blank"><img src="/images/linkedin.svg" alt="LinkedIn" title="LinkedIn" class="profile-icon img-thumbnail"/></a></aside></section></div><div class="clearfix"></div><footer id="sitefooter" class="text-muted"><p class="pull-left">Content is &copy; Peter MacNaughton 2013</p><p class="pull-right">This website was last updated on Thu Nov 14 2013</p></footer><script defer="defer"  src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><script defer="defer"  src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script><script defer="defer"  src="/vendor/twitter-bootstrap/dist/js/bootstrap.min.js"></script><script defer="defer"  src="/scripts/script.js"></script><script defer="defer"  src="/scripts/google-analytics.js"></script></body></html>

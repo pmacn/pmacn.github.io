@@ -1,0 +1,69 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Octopress Windows-Style | Peter MacNaughton</title><meta name="description" content="Peter MacNaughton's personal website"><meta name="keywords" content="peter, macnaughton, tech, programmming, .net"><meta name="author" content="Peter MacNaughton"><meta name="generator" content="DocPad v6.54.6" /><meta name="viewport" content="width=device-width"><link rel="shortcut icon" href="images/icons/favicon.ico"><link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/icons/apple-touch-icon-144-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/icons/apple-touch-icon-114-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/icons/apple-touch-icon-72-precomposed.png"><link rel="apple-touch-icon-precomposed" href="images/icons/apple-touch-icon-57-precomposed.png"><!--[if lt IE 9]><script async src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]--><link  rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" /><link  rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" /><link  rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" /><link  rel="stylesheet" href="/styles/twitter-bootstrap.css" /><link  rel="stylesheet" href="/styles/codehighlight.css" /><link  rel="stylesheet" href="/styles/style.css" /></head><body><div class="navbar navbar-default navbar-fixed-top"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">MacNaughton</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav"><li typeof="sioc:Page" about="/pages/about"><a href="/pages/about" property="dc:title">About</a></li></ul></div></div><div id="wrap"><section id="content" class="content col-xs-12 col-md-9"><article id="post" class="col-xs-12 post col-lg-8 pull-right"><h1>Octopress Windows-Style</h1><div class="post-content"><p>I would say this is another one of those <em>&quot;moving to Octopress&quot;</em> posts, except that I only had one post and my WordPress blog had not been active a full 24 hours when I switched. So moving my content was a matter of <em>ctrl-a, ctrl-c, alt-tab, ctrl-v</em>.<!-- read more --></p>
+<p>Instead post will talk about how to run Octopress on Windows, since for obvious reasons most of the available information is for fowl-based operating systems or fruit-based computers.</p>
+<p>It might just be that it&#39;s so simple to do on Windows that no one has felt the need to write about it. But hey, maybe that&#39;ll be my niche, I&#39;ll write about all the really simple stuff that no one else thinks is worth the keystrokes.</p>
+<p>This post also assumes that you have none of the required tools installed, so we&#39;re starting with...</p>
+<h2 id="installing-git">Installing Git</h2>
+<p>Head on over <a href="http://git-scm.com/download/win">here</a> and your download should start automatically. Run the installer, it&#39;s not a very scary one.</p>
+<p>When the installer asks you about adjusting your PATH environment, pick at least <em><strong>Run Git from the Windows Command Prompt</strong></em>. The remainder of this setup assumes that you have. </p>
+<p><img src="/images/git-install.png" alt="git install dialog"></p>
+<p><em><strong>If you have previously installed Git and did not have the installer set the PATH variable you might want to do it manually now</strong></em></p>
+<p>Side note: If command prompt Git scares you or you just like great applications, I would recommend you check out <a href="http://www.sourcetreeapp.com/">SourceTree</a>. It is all kinds of awesome and it&#39;s <a href="http://github.com/nvie/gitflow">git-flow</a> friendly and free!</p>
+<h2 id="installing-ruby-and-devkit">Installing Ruby and DevKit</h2>
+<p><em>Edit: You might want to check out <a href="/blog/2013/11/07/multiple-rubies-on-windows/">this post</a> for installing Ruby and DevKit instead, or you can just keep going.</em></p>
+<ul>
+<li>Go <a href="http://rubyinstaller.org/downloads/">here</a> and select the Ruby installer of your choice. (Octopress requires version 1.9.3 or later at the time of writing this post)</li>
+<li>Make sure that you <strong>do not include any white space in the installation path</strong> as this apparently can have adverse effects and the same goes for DevKit.</li>
+<li>Check <em><strong>Add Ruby executables to your PATH</strong></em> <em>(note that Ruby sets your user specific PATH and not the system one)</em></li>
+</ul>
+<p><img src="/images/ruby-install.png" alt="ruby install dialog"><br><em>The other options you can do as you see fit, I&#39;d recommend checking them both</em></p>
+<ul>
+<li>While Ruby is installing you want to start downloading the DevKit from the <a href="http://rubyinstaller.org/downloads/">same page as before</a>, taking care to read which version of the DevKit goes with your version of Ruby.</li>
+<li>The DevKit is delivered as a self-extracting archive and where you extract it is where it will be installed; So pick a good spot. I generally put it somewhere under the directory of my ruby installation.</li>
+</ul>
+<p>Open up PowerShell and run the following</p>
+<pre class="highlighted"><code class="tex">PS C:<span class="command">\&gt;</span> cd ruby\193<span class="command">\devkit</span>
+
+PS C:<span class="command">\ruby</span>\193<span class="command">\devkit</span>&gt; ruby .<span class="command">\dk</span>.rb init
+<span class="special">[</span>INFO<span class="special">]</span> found RubyInstaller v1.9.3 at C:/ruby/193
+-- output snipped ---
+
+PS C:<span class="command">\ruby</span>\193<span class="command">\devkit</span>&gt; ruby .<span class="command">\dk</span>.rb install
+<span class="special">[</span>INFO<span class="special">]</span> Updating convenience notice gem override for 'C:/ruby/193'
+<span class="special">[</span>INFO<span class="special">]</span> Installing 'C:/ruby/193/lib/ruby/site_ruby/devkit.rb'</code></pre>
+<h2 id="you-re-ready-for-octopress-">You&#39;re ready for Octopress!</h2>
+<p>Start by cloning the Octopress project from Github<br><em>Note that D:\Git is not where Git was installed, but where I store all of my git repositories</em></p>
+<pre class="highlighted"><code class="brainfuck"><span class="comment">PS</span> <span class="comment">D:\Git</span>&gt; <span class="comment">git</span> <span class="comment">clone</span> <span class="comment">git://github</span>.<span class="comment">com/imathis/octopress</span>.<span class="comment">git</span> <span class="comment">octopress</span>
+<span class="comment">Cloning</span> <span class="comment">into</span> <span class="comment">'octopress'</span>.<span class="string">.</span><span class="string">.</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span> <span class="comment">output</span> <span class="comment">snipped</span> <span class="literal">-</span><span class="literal">-</span><span class="literal">-</span>
+<span class="comment">Checking</span> <span class="comment">connectivity</span>.<span class="string">.</span><span class="string">.</span> <span class="comment">done</code></pre>
+<p>Then move into the newly created repository</p>
+<pre class="highlighted"><code class="tex">PS D:<span class="command">\Git</span><span class="command">\&gt;</span> cd octopress</code></pre>
+<p>and run the following commands</p>
+<pre class="highlighted"><code class="brainfuck"><span class="comment">PS</span> <span class="comment">D:\Git\octopress</span>&gt; <span class="comment">gem</span> <span class="comment">install</span> <span class="comment">bundle</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span> <span class="comment">output</span> <span class="comment">snipped</span> <span class="literal">-</span><span class="literal">-</span><span class="literal">-</span>
+<span class="comment">2</span> <span class="comment">gems</span> <span class="comment">installed</span>
+
+<span class="comment">PS</span> <span class="comment">D:\Git\octopress</span>&gt; <span class="comment">bundle</span> <span class="comment">install</span>
+<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span> <span class="comment">lots</span> <span class="comment">of</span> <span class="comment">output</span> <span class="comment">snipped</span> <span class="literal">-</span><span class="literal">-</span><span class="literal">-</span>
+<span class="comment">Your</span> <span class="comment">bundle</span> <span class="comment">is</span> <span class="comment">complete!</span>
+<span class="comment">Use</span> <span class="comment">`bundle</span> <span class="comment">show</span> <span class="title">[</span><span class="comment">gemname</span>]<span class="comment">`</span> <span class="comment">to</span> <span class="comment">see</span> <span class="comment">where</span> <span class="comment">a</span> <span class="comment">bundled</span> <span class="comment">gem</span> <span class="comment">is</span> <span class="comment">installed</span>.</code></pre>
+<p>If you run into issues during the two previous steps it most likely means that you didn&#39;t install the DevKit or that your environment PATH is not set up correctly. You might want to check that none of the paths in your PATH variable is wrapped in quotes as PowerShell does not load these. Otherwise you can try rerunning from Installing Ruby, it won&#39;t harm anything.</p>
+<p>You might also have problems if you had a different version of ruby installed already. In which case you might have to install <a href="http://github.com/vertiginous/pik">pik</a> to manage your ruby versions, but that&#39;s a whole other post.</p>
+<p>Finally, install the classic theme (or find yourself a different one in the configuration )  </p>
+<pre class="highlighted"><code class="xml"> PS D:\Git\octopress&gt; bundle exec rake install
+ ## Copying classic theme into ./source and ./sass
+ --- output snipped ---</code></pre>
+<p><em>The &#39;bundle exec&#39; part is only required if there are gem version conflicts, which at the time of this writing there would only be if you installed 2.0.0 instead of 1.9.3</em></p>
+<p>Congratulations! installation is done and you&#39;re ready to <a href="http://octopress.org/docs/configuring/">configure Octopress</a>.</p>
+<p>Bon Voyage!</p>
+</div></article><aside class="col-xs-12 col-lg-4 pull-right"></aside><section class="col-xs-12 col-lg-8 pull-right"><h1>Comments</h1><div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_shortname = 'macnaughton';
+var disqus_identifier = 'http://peter.macnaughton.info/posts/octopress-on-windows';
+var disqus_url = 'http://peter.macnaughton.info/posts/octopress-on-windows';
+var disqus_title = 'Octopress Windows-Style';
+var disqus_script = 'embed.js';
+
+(function () {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());</script></section></section><section id="asides" class="container col-xs-12 col-md-3"><aside><h1>Also available on</h1><a href="http://stackoverflow.com/users/1418063/pmacnaughton" target="_blank"><img src="/images/stackoverflow.svg" alt="StackOverflow" title="StackOverflow" class="profile-icon img-thumbnail"/></a><a href="http://careers.stackoverflow.com/pmacnaughton" target="_blank"><img src="/images/careers.svg" alt="StackOverflow Careers" title="StackOverflow Careers" class="profile-icon img-thumbnail"/></a><a href="http://github.com/pmacn" target="_blank"><img src="/images/github.svg" alt="GitHub" title="GitHub" class="profile-icon img-thumbnail"/></a><a href="http://www.linkedin.com/in/pmacnaughton" target="_blank"><img src="/images/linkedin.svg" alt="LinkedIn" title="LinkedIn" class="profile-icon img-thumbnail"/></a></aside></section></div><div class="clearfix"></div><footer id="sitefooter" class="text-muted"><p class="pull-left">Content is &copy; Peter MacNaughton 2013</p><p class="pull-right">This website was last updated on Thu Nov 14 2013</p></footer><script defer="defer"  src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><script defer="defer"  src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script><script defer="defer"  src="/vendor/twitter-bootstrap/dist/js/bootstrap.min.js"></script><script defer="defer"  src="/scripts/script.js"></script><script defer="defer"  src="/scripts/google-analytics.js"></script></body></html>

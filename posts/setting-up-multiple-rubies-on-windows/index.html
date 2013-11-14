@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Setting up multiple rubies on Windows | Peter MacNaughton</title><meta name="description" content="Peter MacNaughton's personal website"><meta name="keywords" content="peter, macnaughton, tech, programmming, .net"><meta name="author" content="Peter MacNaughton"><meta name="generator" content="DocPad v6.54.6" /><meta name="viewport" content="width=device-width"><link rel="shortcut icon" href="images/icons/favicon.ico"><link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/icons/apple-touch-icon-144-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/icons/apple-touch-icon-114-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/icons/apple-touch-icon-72-precomposed.png"><link rel="apple-touch-icon-precomposed" href="images/icons/apple-touch-icon-57-precomposed.png"><!--[if lt IE 9]><script async src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]--><link  rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" /><link  rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" /><link  rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" /><link  rel="stylesheet" href="/styles/twitter-bootstrap.css" /><link  rel="stylesheet" href="/styles/codehighlight.css" /><link  rel="stylesheet" href="/styles/style.css" /></head><body><div class="navbar navbar-default navbar-fixed-top"><div class="navbar-header"><button type="button" data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a href="/" class="navbar-brand">MacNaughton</a></div><div class="navbar-collapse collapse"><ul class="nav navbar-nav"><li typeof="sioc:Page" about="/pages/about"><a href="/pages/about" property="dc:title">About</a></li></ul></div></div><div id="wrap"><section id="content" class="content col-xs-12 col-md-9"><article id="post" class="col-xs-12 post col-lg-8 pull-right"><h1>Setting up multiple rubies on Windows</h1><div class="post-content"><p>This post will deal with getting a solid installation of multiple Rubies on Windows. If you&#39;ve got previous installations you can always just uninstall them and start over from here. Make sure to delete previous installation folders after uninstalling.<!-- read more --></p>
+<h2 id="installing-rubies">Installing Rubies</h2>
+<p>Go get all the <a href="http://rubyinstaller.org/downloads/">ruby installers</a> you want and install each one into their own folder. <em>(eg. C:\Ruby\Ruby193 or C:\Ruby\Ruby200-x64)</em></p>
+<p>Select one as your default version and install it with <em><strong>Add Ruby executables to your PATH</strong></em>.<br>This will be the active version when opening a new PowerShell.</p>
+<h2 id="installing-devkits">Installing DevKits</h2>
+<p>Download all of the DevKits required for your different Ruby installs from the <a href="http://rubyinstaller.org/downloads/">same page</a>. It should be fairly straight forward to figure out which ones you need.</p>
+<p>While downloading the DevKits you can open up a PowerShell and set the <a href="http://technet.microsoft.com/library/hh847748.aspx">execution policy</a> so that you can run scripts. This isn&#39;t needed until later but we might as well get it out of the way.</p>
+<pre class="highlighted"><code class="bash">PS C:\&gt; Set-ExecutionPolicy Unrestricted -Scope CurrentUser</code></pre>
+<h4 id="repeat-the-following-procedure-for-each-devkit-that-you-are-installing">Repeat the following procedure for each DevKit that you are installing</h4>
+<p>Extract the DevKit to its own folder. <em>(e.g. C:\Ruby\DevKit-mingw64-4.7.2 or C:\Ruby\DevKit-tdm-32-4.5.2)</em></p>
+<p>Back to our PowerShell so we can initialize the DevKit installation</p>
+<pre class="highlighted"><code class="bash">PS C:&gt; cd Ruby\DevKit-mingw64-4.7.2
+PS C:\Ruby\DevKit-mingw64-4.7.2&gt; ruby .\dk.rb init</code></pre>
+<p>Chances are that the initialization didn&#39;t go as intended so open up config.yml in a text editor. (yay notepad!)</p>
+<pre class="highlighted"><code class="bash">PS C:\Ruby\DevKit-mingw64-4.7.2&gt; notepad config.xml</code></pre>
+<p>The config file should contain the installation paths of the Ruby versions that this DevKit is for. Add any missing ones and remove any that are not for that DevKit.<br><em>Note the forward-slashes and the leading dash and space</em></p>
+<p>For instance, if the DevKit is for 2.0.0 x64</p>
+<pre class="highlighted"><code class="bash">- C:/Ruby/Ruby200-x64</code></pre>
+<p>or if the DevKit is for 1.8.7 and 1.9.3</p>
+<pre class="highlighted"><code class="bash">- C:/Ruby/Ruby187
+- C:/Ruby/Ruby193</code></pre>
+<p>Once you&#39;ve made sure that the file contains the right paths, save any changes and close notepad.</p>
+<p>Then you can finally install the DevKit</p>
+<pre class="highlighted"><code class="bash">PS C:\Ruby\DevKit-mingw64-4.7.2&gt; ruby .\dk.rb install</code></pre>
+<p><em>And now to the hero of our little drama...</em></p>
+<h1 id="pik-to-the-rescue-">Pik to the rescue!</h1>
+<p>We begin by installing the Pik gem</p>
+<pre class="highlighted"><code class="bash">PS C:\&gt; gem install pik
+--- output snipped ---
+1 gem installed</code></pre>
+<p>Now find a good spot for Pik to live and install it there (I usually put it in C:\Ruby\Pik)</p>
+<pre class="highlighted"><code class="bash">PS C:\&gt; pik_install C:\Ruby\Pik</code></pre>
+<p>At this point Pik will warn you that the installation path is not in your PATH variable, so lets fix that.</p>
+<pre class="highlighted"><code class="bash">    PS C:\&gt; [environment]::SetEnvironmentVariable(<span class="string">"PATH"</span>, <span class="string">"C:\Ruby\Pik;"</span> + [environment]::GetEnvironmentVariable(<span class="string">"PATH"</span>, <span class="string">"Machine"</span>), <span class="string">"Machine"</span>)</code></pre>
+<p><em>Since that&#39;s quite a mouthful you might want to create a <a href="/posts/hardest-way-to-set-a-path/">function</a> for that some day</em></p>
+<p>Now that Pik is ready to go, lets see what it has to say</p>
+<pre class="highlighted"><code class="bash">PS C:&gt; pik info
+pik 0.2.8
+
+ruby:
+interpreter:  <span class="string">"ruby"</span>
+version:      <span class="string">"1.9.3"</span>
+--- output snipped ---</code></pre>
+<p>If Pik complains that you do not have a ruby version in your PATH you might want to go add one now for the version that you want to be your default.<br>If Pik instead warns you that you have more than one Ruby installation in your PATH variable, you should go remove all but the one you want as you default.<br>This is why we only installed one of the Ruby versions with the <em>Add Ruby executables to your PATH</em> option.</p>
+<p>If you have installed pik before you might see something like this?</p>
+<p><code>There was an error.<br>Error: undefined method `[]&#39; for nil:NilClass</code></p>
+<p>If this is the case, remove your Ruby installations from Pik and re-add them. To see installations already added to Pik use the list command.</p>
+<pre class="highlighted"><code class="bash">PS C:&gt; pik list
+* 193: ruby 1.9.3p448 (2013-06-27) [i386-mingw32]</code></pre>
+<p>Then remove and add them</p>
+<pre class="highlighted"><code class="no-highlight">PS C:&gt; pik rm 193
+Are you sure you&#39;d like to remove &#39;193: ruby 1.9.3p448 (2013-06-27) [i386-mingw32]&#39;?  |yes|
+yes
+193: ruby 1.9.3p448 (2013-06-27) [i386-mingw32] removed.
+
+PS C:&gt; pik add C:\Ruby\Ruby193\bin
+** Adding:  193: ruby 1.9.3p448 (2013-06-27) [i386-mingw32]
+Located at:  C:\Ruby\Ruby193\bin</code></pre>
+<p>Once <code>pik info</code> returns actual information about one of your ruby installations, you can add the other ones.<br>When you have added all your ruby installations to pik you can switch versions like this.</p>
+<pre class="highlighted"><code class="bash">PS C:\&gt; pik use 200</code></pre>
+<p>And you&#39;re good to go, for now.</p>
+</div></article><aside class="col-xs-12 col-lg-4 pull-right"></aside><section class="col-xs-12 col-lg-8 pull-right"><h1>Comments</h1><div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_shortname = 'macnaughton';
+var disqus_identifier = 'http://peter.macnaughton.info/posts/setting-up-multiple-rubies-on-windows';
+var disqus_url = 'http://peter.macnaughton.info/posts/setting-up-multiple-rubies-on-windows';
+var disqus_title = 'Setting up multiple rubies on Windows';
+var disqus_script = 'embed.js';
+
+(function () {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());</script></section></section><section id="asides" class="container col-xs-12 col-md-3"><aside><h1>Also available on</h1><a href="http://stackoverflow.com/users/1418063/pmacnaughton" target="_blank"><img src="/images/stackoverflow.svg" alt="StackOverflow" title="StackOverflow" class="profile-icon img-thumbnail"/></a><a href="http://careers.stackoverflow.com/pmacnaughton" target="_blank"><img src="/images/careers.svg" alt="StackOverflow Careers" title="StackOverflow Careers" class="profile-icon img-thumbnail"/></a><a href="http://github.com/pmacn" target="_blank"><img src="/images/github.svg" alt="GitHub" title="GitHub" class="profile-icon img-thumbnail"/></a><a href="http://www.linkedin.com/in/pmacnaughton" target="_blank"><img src="/images/linkedin.svg" alt="LinkedIn" title="LinkedIn" class="profile-icon img-thumbnail"/></a></aside></section></div><div class="clearfix"></div><footer id="sitefooter" class="text-muted"><p class="pull-left">Content is &copy; Peter MacNaughton 2013</p><p class="pull-right">This website was last updated on Thu Nov 14 2013</p></footer><script defer="defer"  src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><script defer="defer"  src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script><script defer="defer"  src="/vendor/twitter-bootstrap/dist/js/bootstrap.min.js"></script><script defer="defer"  src="/scripts/script.js"></script><script defer="defer"  src="/scripts/google-analytics.js"></script></body></html>
